@@ -1,5 +1,10 @@
 package com.manage.pojo;
 
+/**
+ * 人员档案所用 员工信息pojo类
+ *
+ * @author 张杰
+ */
 public class EmployeeInfo extends EIPage {
     private int id;
     private String empName;
