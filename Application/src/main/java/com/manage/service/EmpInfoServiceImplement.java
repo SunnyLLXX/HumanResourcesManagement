@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.manage.dao.EmployeeInfoDao;
 import com.manage.pojo.EmployeeContract;
+import com.manage.pojo.EmployeeDeployment;
 import com.manage.pojo.EmployeeInfo;
 import com.manage.pojo.EmployeeRecords;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -22,6 +23,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 模块1.2.3 & 1.2.4所用
+ * 员工基本信息维护页面链接 http://localhost:8080/empInfo/baseInfoManagement
+ * 员工档案管理页面链接 http://localhost:8080/empInfo/recordsManagement
+ * 员工合同管理页面链接 http://localhost:8080/empInfo/contractManagement
+ * 人事调配管理页面链接 http://localhost:8080/empInfo/deploymentManagement
+ *
  * @author 张杰
  */
 @Service
@@ -294,14 +301,21 @@ public class EmpInfoServiceImplement implements EmpInfoService {
         String orderBy = "";
         // 按照开始时间升序 sa -- start ascend
         if (sortType != null) {
-            if (sortType.equals("sa")) {
-                orderBy = "startDate ASC";
-            } else if (sortType.equals("sd")) {  // start descend
-                orderBy = "startDate DESC";
-            } else if (sortType.equals("ea")) {
-                orderBy = "endDate ASC";
-            } else {
-                orderBy = "endDate DESC";
+            switch (sortType) {
+                case "sa":
+                    orderBy = "startDate ASC";
+                    break;
+                case "sd":   // start descend
+                    orderBy = "startDate DESC";
+                    break;
+                case "ea":
+                    orderBy = "endDate ASC";
+                    break;
+                case "ed":
+                    orderBy = "endDate DESC";
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -386,5 +400,124 @@ public class EmpInfoServiceImplement implements EmpInfoService {
             return "删除成功";
         }
         return "删除失败";
+    }
+
+    @Override
+    public HashMap<String, Object> selectDeployment(EmployeeDeployment employeeDeployment, String sortType) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        // 设置排序参数
+        String orderBy = "";
+        if (sortType != null) {
+            switch (sortType) {
+                case "sa":   // 按照开始时间升序 sa -- start ascend
+                    orderBy = "startDate ASC";
+                    break;
+                case "sd":   // start descend
+                    orderBy = "startDate DESC";
+                    break;
+                case "da":
+                    orderBy = "deployDate ASC";
+                    break;
+                case "dd":
+                    orderBy = "deployDate DESC";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        //设置分页参数
+        PageHelper.startPage(employeeDeployment.getPage(), employeeDeployment.getRow(), orderBy);
+
+        //根据用户选择的查询条件查询结果
+        List<EmployeeDeployment> list = null;
+        if (employeeDeployment.getConValue() != null) {
+            if (employeeDeployment.getConValue().equals("")) {
+                list = employeeInfoDao.selectDeployment();
+            } else {
+                if (employeeDeployment.getCondition().equals("员工姓名")) {
+                    //设置用户输入的查询条件
+                    employeeDeployment.setEmpName(employeeDeployment.getConValue());
+                    list = employeeInfoDao.selectDeploymentByEmpName(employeeDeployment);
+                } else if (employeeDeployment.getCondition().equals("员工编号")) {
+                    employeeDeployment.setEmpId(Integer.parseInt(employeeDeployment.getConValue()));
+                    list = employeeInfoDao.selectDeploymentByEmpId(employeeDeployment);
+                } else {
+                    //查询数据库表数据
+                    list = employeeInfoDao.selectDeployment();
+                }
+            }
+        } else {
+            list = employeeInfoDao.selectDeployment();
+        }
+
+        //把查询到的数据转换成分页对象
+        PageInfo<EmployeeDeployment> page = new PageInfo<>(list);
+
+        //获取分页的当前页的集合
+        map.put("list", page.getList());
+        //总条数
+        map.put("total", page.getTotal());
+        //总页数
+        map.put("totalPage", page.getPages());
+        //上一页
+        if (page.getPrePage() == 0) {
+            map.put("pre", 1);
+        } else {
+            map.put("pre", page.getPrePage());
+        }
+        //下一页
+        if (page.getNextPage() == 0) {
+            map.put("next", page.getPages());
+        } else {
+            map.put("next", page.getNextPage());
+        }
+        //当前页
+        map.put("cur", page.getPageNum());
+
+        return map;
+    }
+
+    @Override
+    public List<EmployeeDeployment> selectDeploymentByEmpId(EmployeeDeployment employeeDeployment) {
+        return employeeInfoDao.selectDeploymentByEmpId(employeeDeployment);
+    }
+
+    @Override
+    public String updateDeployment(EmployeeDeployment employeeDeployment) {
+        int num = employeeInfoDao.updateDeployment(employeeDeployment);
+        if (num > 0) {
+            return "修改成功";
+        }
+        return "修改失败";
+    }
+
+    @Override
+    public String addDeployment(EmployeeDeployment employeeDeployment) {
+        int num = employeeInfoDao.addDeployment(employeeDeployment);
+        if (num > 0) {
+            return "添加成功";
+        }
+        return "添加失败";
+    }
+
+    @Override
+    public String deleteDeployment(EmployeeDeployment employeeDeployment) {
+        int num = employeeInfoDao.delDeployment(employeeDeployment);
+        if (num > 0) {
+            return "删除成功";
+        }
+        return "删除失败";
+    }
+
+    @Override
+    public List<String> selectDeploymentDep() {
+        return employeeInfoDao.selectDeploymentDep();
+    }
+
+    @Override
+    public List<Object> selectEmployees() {
+        return employeeInfoDao.selectEmployees();
     }
 }

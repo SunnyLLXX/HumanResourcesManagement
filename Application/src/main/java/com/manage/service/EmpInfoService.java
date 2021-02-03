@@ -1,15 +1,21 @@
 package com.manage.service;
 
 import com.manage.pojo.EmployeeContract;
+import com.manage.pojo.EmployeeDeployment;
 import com.manage.pojo.EmployeeInfo;
 import com.manage.pojo.EmployeeRecords;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 
 /**
- * 人员档案所用
+ * 模块1.2.3 & 1.2.4所用
+ * 员工基本信息维护页面链接 http://localhost:8080/empInfo/baseInfoManagement
+ * 员工档案管理页面链接 http://localhost:8080/empInfo/recordsManagement
+ * 员工合同管理页面链接 http://localhost:8080/empInfo/contractManagement
+ * 人事调配管理页面链接 http://localhost:8080/empInfo/deploymentManagement
  *
  * @author 张杰
  */
@@ -56,4 +62,24 @@ public interface EmpInfoService {
     String addContract(EmployeeContract employeeContract);
 
     String deleteContract(EmployeeContract employeeContract);
+
+    // ===================================
+    // 人事调配所用
+
+    HashMap<String, Object> selectDeployment(EmployeeDeployment employeeDeployment, String sortType);
+
+    List<EmployeeDeployment> selectDeploymentByEmpId(EmployeeDeployment employeeDeployment);
+
+    // 修改
+    String updateDeployment(EmployeeDeployment employeeDeployment);
+
+    String addDeployment(EmployeeDeployment employeeDeployment);
+
+    String deleteDeployment(EmployeeDeployment employeeDeployment);
+
+    // 查询所有部门
+    List<String> selectDeploymentDep();
+
+    // 查询所有员工ID
+    List<Object> selectEmployees();
 }

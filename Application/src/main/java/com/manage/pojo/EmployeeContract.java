@@ -1,5 +1,14 @@
 package com.manage.pojo;
 
+/**
+ * 模块1.2.3 & 1.2.4所用
+ * 员工基本信息维护页面链接 http://localhost:8080/empInfo/baseInfoManagement
+ * 员工档案管理页面链接 http://localhost:8080/empInfo/recordsManagement
+ * 员工合同管理页面链接 http://localhost:8080/empInfo/contractManagement
+ * 人事调配管理页面链接 http://localhost:8080/empInfo/deploymentManagement
+ *
+ * @author 张杰
+ */
 public class EmployeeContract extends EIPage {
     private int contractId;
     private int empId;

@@ -1,6 +1,7 @@
 package com.manage.controller;
 
 import com.manage.pojo.EmployeeContract;
+import com.manage.pojo.EmployeeDeployment;
 import com.manage.pojo.EmployeeInfo;
 import com.manage.pojo.EmployeeRecords;
 import com.manage.service.EmpInfoService;
@@ -12,12 +13,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 
 /**
- * 1.2.3 人员档案所用
+ * 模块1.2.3 & 1.2.4所用
  * 员工基本信息维护页面链接 http://localhost:8080/empInfo/baseInfoManagement
  * 员工档案管理页面链接 http://localhost:8080/empInfo/recordsManagement
- * 员工合同管理页面链接
+ * 员工合同管理页面链接 http://localhost:8080/empInfo/contractManagement
+ * 人事调配管理页面链接 http://localhost:8080/empInfo/deploymentManagement
  *
  * @author 张杰
  */
@@ -154,10 +157,10 @@ public class EmpInfoController {
     @RequestMapping("/contractManagement")
     public String contractList(EmployeeContract employeeContract, ModelMap modelMap, String sortType) {
         // 查询分页数据
-        HashMap<String, Object> map = empInfoService.selectContract(employeeContract,sortType);
+        HashMap<String, Object> map = empInfoService.selectContract(employeeContract, sortType);
         // 把数据传给前端
         modelMap.put("info", map);
-        modelMap.put("sortType",sortType);
+        modelMap.put("sortType", sortType);
         return "empInfo/contractManagement/contract-management";
     }
 
@@ -200,6 +203,72 @@ public class EmpInfoController {
         HashMap<String, Object> map = new HashMap<String, Object>();
         String info = empInfoService.deleteContract(employeeContract);
         map.put("info", info);
+        return map;
+    }
+
+    // ===================================
+    // 人事调配所用
+    // 访问管理页面
+    @RequestMapping("/deploymentManagement")
+    public String deploymentList(EmployeeDeployment employeeDeployment, ModelMap modelMap, String sortType) {
+        // 查询分页数据
+        HashMap<String, Object> map = empInfoService.selectDeployment(employeeDeployment, sortType);
+        // 把数据传给前端
+        modelMap.put("info", map);
+        modelMap.put("sortType", sortType);
+        return "empInfo/deploymentManagement/deployment-management";
+    }
+
+    // 打开添加页面
+    @RequestMapping("/addDeploymentPage")
+    public String addDeploymentPage(ModelMap modelMap) {
+        modelMap.put("employees", empInfoService.selectEmployees());
+        modelMap.put("departments", empInfoService.selectDeploymentDep());
+        return "empInfo/deploymentManagement/add-deployment";
+    }
+
+    // 打开修改页面
+    @RequestMapping("/editDeploymentPage")
+    public String editDeploymentPage(EmployeeDeployment employeeDeployment, ModelMap modelMap) {
+        List<EmployeeDeployment> e = empInfoService.selectDeploymentByEmpId(employeeDeployment);
+        //数据传递给前端
+        modelMap.addAttribute("info", e.get(0));
+        modelMap.put("departments", empInfoService.selectDeploymentDep());
+        return "empInfo/deploymentManagement/edit-deployment";
+    }
+
+    @RequestMapping("/addDeployment")
+    @ResponseBody
+    public HashMap<String, Object> addDeployment(EmployeeDeployment employeeDeployment) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        String info = empInfoService.addDeployment(employeeDeployment);
+        map.put("info", info);
+        return map;
+    }
+
+    @RequestMapping("/editDeployment")
+    @ResponseBody
+    public HashMap<String, Object> editDeployment(EmployeeDeployment employeeDeployment) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        String info = empInfoService.updateDeployment(employeeDeployment);
+        map.put("info", info);
+        return map;
+    }
+
+    @RequestMapping("/delDeployment")
+    @ResponseBody
+    public HashMap<String, Object> delDeployment(EmployeeDeployment employeeDeployment) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        String info = empInfoService.deleteDeployment(employeeDeployment);
+        map.put("info", info);
+        return map;
+    }
+
+    @RequestMapping("/selectInfo")
+    @ResponseBody
+    public HashMap<String, Object> selectInfo(EmployeeInfo employeeInfo) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("info", empInfoService.selectInfoById(employeeInfo));
         return map;
     }
 }

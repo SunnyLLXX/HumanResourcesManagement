@@ -1,6 +1,7 @@
 package com.manage.dao;
 
 import com.manage.pojo.EmployeeContract;
+import com.manage.pojo.EmployeeDeployment;
 import com.manage.pojo.EmployeeInfo;
 import com.manage.pojo.EmployeeRecords;
 import org.apache.ibatis.annotations.*;
@@ -8,7 +9,11 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * 人员档案所用
+ * 模块1.2.3 & 1.2.4所用
+ * 员工基本信息维护页面链接 http://localhost:8080/empInfo/baseInfoManagement
+ * 员工档案管理页面链接 http://localhost:8080/empInfo/recordsManagement
+ * 员工合同管理页面链接 http://localhost:8080/empInfo/contractManagement
+ * 人事调配管理页面链接 http://localhost:8080/empInfo/deploymentManagement
  *
  * @author 张杰
  */
@@ -101,4 +106,40 @@ public interface EmployeeInfoDao {
     @Delete("DELETE FROM employee_contract WHERE contractId = #{contractId}")
     int delContract(EmployeeContract employeeContract);
 
+    // ===================================
+    // 人事调配所用
+    // 查询所有信息
+    @Select("SELECT a.*,b.startDate FROM employee_deployment a,employee_contract b WHERE a.empId = b.empId")
+    List<EmployeeDeployment> selectDeployment();
+
+    // 按员工名称查询所有信息
+    @Select("SELECT a.*,b.startDate FROM employee_deployment a,employee_contract b WHERE a.empId = b.empId " +
+            "AND a.empId IN (SELECT id FROM employee_info WHERE empName LIKE \"%${empName}%\")")
+    List<EmployeeDeployment> selectDeploymentByEmpName(EmployeeDeployment employeeDeployment);
+
+    // 按empId查询所有信息
+    @Select("SELECT a.*,b.startDate FROM employee_deployment a,employee_contract b WHERE a.empId = #{empId} " +
+            "AND a.empId = b.empId")
+    List<EmployeeDeployment> selectDeploymentByEmpId(EmployeeDeployment employeeDeployment);
+
+    @Select("SELECT DISTINCT(department) FROM employee_info")
+    List<String> selectDeploymentDep();
+
+    @Select("SELECT id FROM employee_info")
+    List<Object> selectEmployees();
+
+    // 修改信息
+    @Update("UPDATE employee_deployment SET originalDep = #{originalDep}, originalJob = #{originalJob}, newDep = #{newDep}," +
+            "newJob = #{newJob}, deployDate = #{deployDate}, deployReason = #{deployReason} " +
+            "WHERE deploymentId = #{deploymentId}")
+    int updateDeployment(EmployeeDeployment employeeDeployment);
+
+    // 增加信息
+    @Update("INSERT INTO employee_deployment SET empId = #{empId}, originalDep = #{originalDep}, originalJob = #{originalJob}, " +
+            "newDep = #{newDep}, newJob = #{newJob}, deployDate = #{deployDate}, deployReason = #{deployReason}")
+    int addDeployment(EmployeeDeployment employeeDeployment);
+
+    // 按contractId删除信息
+    @Delete("DELETE FROM employee_deployment WHERE deploymentId = #{deploymentId}")
+    int delDeployment(EmployeeDeployment employeeDeployment);
 }
