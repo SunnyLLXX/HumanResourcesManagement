@@ -20,7 +20,7 @@
   <input type="submit" class="layui-btn layui-btn-normal" value="查询">
 </form>
 
-<button type="button" class="layui-btn layui-btn-normal">
+<button type="button" class="layui-btn layui-btn-normal" onclick="addInfo()">
   <i class="layui-icon">&#xe608;</i> 添加
 </button>
 
@@ -56,8 +56,8 @@
     <td th:text="${i.remarks}"></td>
     <td>
       <div class="layui-btn-group">
-        <button class="layui-btn layui-btn-normal" type="button" onclick="update(this)">修改</button>
-        <button class="layui-btn layui-btn-danger" type="button" onclick="delUser(this)">删除</button>
+        <button class="layui-btn layui-btn-normal" type="button" onclick="updateInfo(this)">修改</button>
+        <button class="layui-btn layui-btn-danger" type="button" onclick="delInfo(this)">删除</button>
       </div>
     </td>
   </tr>
@@ -79,8 +79,14 @@
 </body>
 </html>
 <script>
+  // 打开增加信息页面
+  function addInfo(){
+    //打开修改弹窗
+    x_admin_show("添加", "/empInfo/addInfoPage");
+  }
+
   //打开修改页面
-  function update(obj) {
+  function updateInfo(obj) {
     //获取当前选中行的userId值
     let id = $(obj).parent().parent().parent().find("td").eq(0).text();
     //打开修改弹窗
@@ -88,24 +94,22 @@
   }
 
   //删除
-  function delUser(obj) {
+  function delInfo(obj) {
     let id = $(obj).parent().parent().parent().find("td").eq(0).text();
     //提示框提示用户是否删除
     layer.confirm("你确定要删除吗？", {icon: 2, title: "警告"}, (index) => {
       $.ajax({
-        url: "/user/del",
+        url: "/empInfo/delInfo",
         type: "get",
         data: {id},
         dataType: "json",
         success: (data) => {
           layer.alert(data.info, {icon: 0, title: "提示"});
-          if (data.info == "删除成功") {
+          if (data.info === "删除成功") {
             // 刷新
-            // window.location.href = window.location.href;
-
-            $(obj).parent().parent().remove();
+            layer.close(index);
+            parent.window.location.href = parent.window.location.href;
           }
-          layer.close(index);
         }
       });
     });
