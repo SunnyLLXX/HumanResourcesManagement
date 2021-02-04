@@ -104,7 +104,7 @@
         var group=$(obj).parent().parent().find("td").eq(8).text();
         var employPosition=$(obj).parent().parent().find("td").eq(9).text();
         var employDate=formatTime();
-        var employState="在职";
+        var employState="后备人员";
         $.ajax({
             url:"/employ/position",
             dataType: 'json',
