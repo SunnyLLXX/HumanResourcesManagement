@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
     <title>应聘管理</title>
     <link rel="stylesheet" href="/css/font.css">
     <link rel="stylesheet" href="/css/xadmin.css">
@@ -75,10 +76,25 @@
     共有<span th:text="${info.total}" class="box"></span>条数据
     共有<span th:text="${info.totalPage}" class="box"></span>页
 
+=======
+    <title>Title</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+<div id="app">
+    {{ message }}
+>>>>>>> 13e455cede6bbb768f24b125546d889ec2cbcb56
 </div>
 </body>
 </html>
 <script>
+<<<<<<< HEAD
 
     //打开修改页面
     function update(obj) {
@@ -201,4 +217,12 @@
         });
     })
 
+=======
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!'
+        }
+    })
+>>>>>>> 13e455cede6bbb768f24b125546d889ec2cbcb56
 </script>
