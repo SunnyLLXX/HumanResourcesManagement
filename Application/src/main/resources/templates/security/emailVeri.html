@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>邮箱验证</title>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+</head>
+<body>
+<div class="x-body" style="position: absolute;left:30%;top:20%">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="email" class="layui-form-label">
+                <span class="x-red">*</span>邮箱
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="email"  name="email" required="" lay-verify="email"
+                       autocomplete="off" class="layui-input">
+            </div>
+
+            <button class="layui-btn layui-btn-normal" type="submit" lay-submit lay-filter="sendCode" >发送验证码</button>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="code" class="layui-form-label">
+                <span class="x-red">*</span>验证码
+            </label>
+            <div class="layui-input-inline">
+                <input type="number" id="code" name="code" required=""
+                       autocomplete="off" class="layui-input">
+            </div>
+
+            <button class="layui-btn layui-btn-normal" type="submit" lay-submit lay-filter="emailVeri">确认</button>
+        </div>
+
+        <span id="info" style="color:red"></span>
+    </form>
+</div>
+<script>
+    $(function  () {
+        layui.use('form', function(){
+            var form = layui.form;
+            //发送验证码
+            form.on('submit(sendCode)', function(data){
+                console.log(data.field)
+                //发送 ajax请求
+                $.ajax({
+                    url:"/login/sendEmail",
+                    type:"post",
+                    data:data.field,
+                    dataType:"json",//返回的数据类型
+                    success:function(data){
+                        layer.alert(data.info);
+                    }
+                })
+                return false;
+            });
+
+            form.on('submit(emailVeri)', function(data){
+                console.log(data.field);
+                //验证 邮箱验证码不能为空
+                if(data.field.code==""){
+                    layer.alert("邮箱验证码不能为空");
+                    return false;
+                }
+                //发送 ajax请求
+                $.ajax({
+                    url:"/login/emailLogin",
+                    type:"post",
+                    data:data.field,
+                    dataType:"json",//返回的数据类型
+                    success:function(data){
+                        $("#e").text(data.info);
+                        if(data.info=="邮箱登录成功"){
+                            window.location.href="/updatePwd"
+                        }else{
+                            layer.alert("验证码错误");
+                        }
+                    }
+                })
+                return false;
+            });
+        });
+    })
+</script>
+
+</body>
+</html>

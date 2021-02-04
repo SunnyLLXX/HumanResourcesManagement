@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+</head>
+<body style="padding: 30px">
+<form class="x-so" action="/user/list" id="myform" >
+    <button class="layui-btn layui-btn-normal" onclick="add()">新增</button>
+    <select id="condition" name="condition" style="width: 100px;height: 37px">
+        <option value="----">----</option>
+        <option value="用户名">用户名</option>
+        <option value="角色">角色</option>
+    </select>
+    <input class="layui-input" name="conValue" th:value="${vv}" type="text" id="conValue" placeholder="请输入查询条件">
+    <input type="button" class="layui-btn layui-btn-normal" onclick="search()" value="查询" >
+</form>
+
+        <table  class="layui-table">
+            <thead>
+                <th>编号</th>
+                <th>用户名</th>
+                <th>密码</th>
+                <th>角色</th>
+                <th>操作</th>
+            </thead>
+            <tbody>
+                <tr th:each="i:${info.list}">
+                    <td th:text="${i.userId}"></td>
+                    <td th:text="${i.username}"></td>
+                    <td th:text="${i.password}"></td>
+                    <td th:text="${i.role}"></td>
+                    <td>
+                        <button class="layui-btn layui-btn-normal" type="button" onclick="update(this)">修改</button>
+                        <button class="layui-btn layui-btn-normal" type="button" onclick="delUser(this)">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="position: absolute;left: 30%;">
+            <a class="layui-btn layui-btn-normal" th:href="@{/user/list(page=${info.pre})}" >上一页</a>
+            <a class="layui-btn layui-btn-normal" th:href="@{/user/list(page=${info.next})}" >下一页</a>
+            一共有<span th:text="${info.total}"></span>条数据
+            一共有<span th:text="${info.totalPage}"></span>页
+            当前第<span th:text="${info.cur}"></span>页
+        </div>
+</body>
+</html>
+<script>
+    function add() {
+        parent.window.location.href="/user/addPage"
+    }
+
+    //打开修改页面的方法
+    function update(obj){
+        //获取当前选中行的userId值
+        var id = $(obj).parent().parent().find("td").eq(0).text();
+        //打开修改弹窗
+        x_admin_show("修改","/user/editPage?userId="+id,500,400);
+
+    }
+    //删除
+    function delUser(obj){
+        //获取当前选中行的userId值
+        var id = $(obj).parent().parent().find("td").eq(0).text();
+        //用提示框确定用户是否删除
+        layer.confirm("你确定要删除吗?",{icon:3,title:"警告"},function(index){
+            $.ajax({
+                url:"/user/del",
+                type:"get",
+                data:{"userId":id},
+                dataType:"json",
+                success:function(data){
+                    layer.alert(data.info,function(){
+                        parent.window.location.href=parent.window.location.href;
+                    })
+                        //第二种：刷新
+                        //$(obj).parent().parent().remove();
+                    //关闭
+                    layer.close(index);
+                }
+            })
+        })
+    }
+
+
+    //查询验证
+    function search(){
+        //获取用户输入的查询条件
+        var v = $("#conValue").val();
+        //获取用户选择的查询
+        var con = $("#condition").val();
+        //判断用户选择的查询条件
+        if(con=="角色"){
+            if(v==="超级管理员"||v==="普通管理员"){
+                document.getElementById("myform").submit();
+            }else{
+                layer.alert("请输入超级管理员或普通管理员");
+            }
+        }else{
+            //用js做表单提交
+            document.getElementById("myform").submit();
+        }
+    }
+
+</script>

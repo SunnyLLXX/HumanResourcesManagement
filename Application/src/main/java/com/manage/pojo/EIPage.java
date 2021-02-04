@@ -10,7 +10,7 @@ public class EIPage {
     //定义页码，并赋初值1，表示第一页
     private int page = 1;
     //定义每页显示的数据条数，并赋初值2，表示每页显示两条数据
-    private int row = 2;
+    private int row = 5;
 
     public int getPage() {
         return page;
