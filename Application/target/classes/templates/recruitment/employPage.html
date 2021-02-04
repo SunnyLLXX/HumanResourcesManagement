@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>员工管理</title>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <link rel="stylesheet" href="/css/recruit.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <script src="/js/layui_exts/excel.js"></script>
+
+</head>
+<body>
+<form class="x-so" style="margin-top: 20px" action="/employ/list">
+    <select id="condition" name="condition" style="width: 100px;height: 40px">
+        <option value="----">请选择</option>
+        <option value="姓名">姓名</option>
+        <option value="部门">部门</option>
+        <option value="入职状态">入职状态</option>
+    </select>
+    <input class="layui-input" name="conValue" type="text" th:value="${vv}" placeholder="请输入查询条件">
+    <input type="submit" class="layui-btn layui-btn-normal" value="查询">
+    <button type="button" lay-submit="" class="layui-btn layui-btn-warm" id="exportExcel" name="exportExcel">
+        <i class="layui-icon">&#xe601;</i>导出Excel</button>
+
+</form>
+
+<table class="layui-table mainTable">
+    <thead class="title">
+    <tr>
+        <th class="title">编号</th>
+        <th class="title">姓名</th>
+        <th class="title">学历</th>
+        <th class="title">部门</th>
+        <th class="title">职位</th>
+        <th class="title">入职时间</th>
+        <th class="title">入职状态</th>
+        <th class="title">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="i:${info.list}">
+        <td th:text="${i.employId}"></td>
+        <td th:text="${i.employName}"></td>
+        <td th:text="${i.college}"></td>
+        <td th:text="${i.group}"></td>
+        <td th:text="${i.employPosition}"></td>
+        <td th:text="${i.employDate}"></td>
+        <td th:text="${i.employState}"></td>
+        <td>
+
+            <button class="layui-btn layui-btn-danger" type="button" onclick="deleteEmploy(this)"><i class="layui-icon">&#xe640;</i>删除</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div style="margin: 20px auto;text-align: center">
+    <a class="layui-btn layui-btn-normal" th:href="@{/employ/list(page=${info.prePage})}">上一页</a>
+    <a class="layui-btn layui-btn-normal" th:href="@{/employ/list(page=${info.nextPage})}">下一页</a>
+    当前第<span th:text="${info.cur}" class="box"></span>页
+    共有<span th:text="${info.total}" class="box"></span>条数据
+    共有<span th:text="${info.totalPage}" class="box"></span>页
+
+</div>
+</body>
+</html>
+<script>
+
+    //删除
+    function  deleteEmploy(obj) {
+        var id=$(obj).parent().parent().find("td").eq(0).text();
+        layer.confirm("你确定你要删除此数据吗？",{icon:3,title:"提示"},function (index) {
+            $.ajax({
+                url:"/employ/del",
+                dataType: 'json',
+                type: 'post',
+                data: {"employId":id},
+                success:function (res) {
+                    console.log((res));
+                    layer.msg(res.info,{time:3000});
+                    if(res.info == "删除成功"){
+                        //第一种刷新
+                        parent.window.location.href=parent.window.location.href;
+                        //第二种刷新
+                        //$(obj).parent().parent().remove();
+                    }
+                    layer.close(index);
+                }
+            })
+        })
+
+    }
+
+
+    //导出文件
+    $('#exportExcel').on('click', function(){
+        $.ajax({
+            url: '/employ/down',
+            dataType: 'json',
+            success: function(res) {
+                // 假如返回的 res.data 是需要导出的列表数据
+                console.log(res);
+                console.log(res.info.list);
+                // 1. 数组头部新增表头
+                res.info.list.unshift({employId: '编号',employName: '姓名', college: '学历',group:'部门',employPosition:'职位',employDate: '入职时间',employState:'入职状态'});
+                // 2. 如果需要调整顺序，请执行梳理函数
+                var data =  LAY_EXCEL.filterExportData(res.info.list, {
+                    employId:'employId',
+                    employName: 'employName',
+                    college:'college',
+                    group:'group',
+                    employPosition:'employPosition',
+                    employDate:'employDate',
+                    employState:'employState'
+                });
+                // 3. 执行导出函数
+                LAY_EXCEL.exportExcel({
+                    sheet1:data
+                }, '员工人员信息.xlsx', 'xlsx');
+                layer.msg("文件导出成功");
+            },
+            error:function (res) {
+                console.log(res);
+                layer.msg("文件导出失败");
+            }
+        });
+    })
+
+</script>
