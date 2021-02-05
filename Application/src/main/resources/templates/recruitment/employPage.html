@@ -23,7 +23,7 @@
     <input class="layui-input" name="conValue" type="text" th:value="${vv}" placeholder="请输入查询条件">
     <input type="submit" class="layui-btn layui-btn-normal" value="查询">
     <button type="button" lay-submit="" class="layui-btn layui-btn-warm" id="exportExcel" name="exportExcel">
-        <i class="layui-icon">&#xe601;</i>导出Excel</button>
+        <i class="layui-icon">&#xe601;</i>导出Excel</button>
 
 </form>
 
@@ -118,7 +118,7 @@
                 // 3. 执行导出函数
                 LAY_EXCEL.exportExcel({
                     sheet1:data
-                }, '员工人员信息.xlsx', 'xlsx');
+                }, '后备人员信息.xlsx', 'xlsx');
                 layer.msg("文件导出成功");
             },
             error:function (res) {
