@@ -34,11 +34,11 @@
     <tr>
         <th class="title">编号</th>
         <th class="title">姓名</th>
-        <th class="title">性别</th>
+<!--        <th class="title">性别</th>-->
         <th class="title">学历</th>
         <th class="title">邮箱</th>
         <th class="title">联系方式</th>
-        <th class="title">出生日期</th>
+<!--        <th class="title">出生日期</th>-->
         <th class="title">应聘日期</th>
         <th class="title">应聘部门</th>
         <th class="title">应聘岗位</th>
@@ -50,20 +50,20 @@
     <tr th:each="i:${info.list}">
         <td th:text="${i.applyId}"></td>
         <td th:text="${i.applyName}"></td>
-        <td th:text="${i.applySex}"></td>
+<!--        <td th:text="${i.applySex}"></td>-->
         <td th:text="${i.applyCollege}"></td>
         <td th:text="${i.applyEmail}"></td>
         <td th:text="${i.applyPhone}"></td>
-        <td th:text="${i.applyBirth}"></td>
+<!--        <td th:text="${i.applyBirth}"></td>-->
         <td th:text="${i.applyDate}"></td>
         <td th:text="${i.applyGroup}"></td>
         <td th:text="${i.applyPosition}"></td>
         <td th:text="${i.applyState}"></td>
         <td>
-            <button class="layui-btn layui-btn-normal" type="button" onclick="update(this)"><i class="layui-icon">&#xe642;</i>修改</button>
-            <button class="layui-btn layui-btn-warm" type="button" onclick="evaluateApply(this)"><i class="layui-icon">&#xe6c6;</i>评价</button>
-            <button class="layui-btn" type="button" onclick="position(this)"><i class="layui-icon">&#xe60e;</i>入岗</button>
-            <button class="layui-btn layui-btn-danger" type="button" onclick="deleteApply(this)"><i class="layui-icon">&#xe640;</i>删除</button>
+            <button class="layui-btn  layui-btn-normal " type="button" onclick="update(this)"><i class="layui-icon">&#xe642;</i>修改</button>
+            <button class="layui-btn  layui-btn-warm " type="button" onclick="evaluateApply(this)"><i class="layui-icon">&#xe6c6;</i>评价</button>
+            <button class="layui-btn " type="button " onclick="position(this)"><i class="layui-icon">&#xe60e;</i>入岗</button>
+            <button class="layui-btn  layui-btn-danger " type="button" onclick="deleteApply(this)"><i class="layui-icon">&#xe640;</i>删除</button>
         </td>
     </tr>
     </tbody>
@@ -84,7 +84,7 @@
     function update(obj) {
         //通过button按钮先找到按钮的父元素,再找父元素
         var id=$(obj).parent().parent().find("td").eq(0).text();
-        x_admin_show("修改","/recruit/editPage?applyId="+id,600,750);
+        x_admin_show("修改","/recruit/editPage?applyId="+id,600,560);
     }
 
     //打开评价页面
