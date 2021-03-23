@@ -41,6 +41,9 @@ public class IndexController {
         return "index";
     }
 
+    @RequestMapping("/welcome")
+    public String welcome() { return "welcome"; }
+
     //访问邮箱验证页面
     @RequestMapping("/emailVeri")
     public String emailVeri(){
