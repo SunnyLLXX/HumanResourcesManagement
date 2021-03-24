@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>考勤记录信息维护</title>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+</head>
+</head>
+<body style="padding: 30px">
+    <button type="button" class="layui-btn layui-btn-normal" onclick="addInfo()">
+        <i class="layui-icon">&#xe608;</i> 添加
+    </button>
+    <button type="button" class="layui-btn layui-btn-normal" onclick="window.location.href = '/atdresult/bing'">
+        <i class="layui-icon"></i> 统计表
+    </button>
+    <br>
+    <table class="layui-table">
+        <thead>
+        <th>编号</th>
+        <th>员工编号</th>
+        <th>类型</th>
+        <th>奖惩金额</th>
+        <th>考勤人</th>
+        <th>月份</th>
+        <th>操作</th>
+        </thead>
+        <tbody>
+        <tr th:each="i:${info.list}">
+            <td th:text="${i.attendanceID}"></td>
+            <td th:text="${i.staffID}"></td>
+            <td th:text="${i.type}"></td>
+            <td th:text="${i.amount}"></td>
+            <td th:text="${i.staffName}"></td>
+            <td th:text="${i.mouth}"></td>
+            <td>
+                <button class="layui-btn layui-btn-normal" type="button" onclick="update(this)">修改</button>
+                <button class="layui-btn layui-btn-normal" type="button" onclick="delInfo(this)">删除</button>
+            </td>
+           </tr>
+        </tbody>
+    </table>
+    <div style="position: absolute;left: 30%;">
+        <a class="layui-btn layui-btn-normal" th:href="@{/attendance/base(page=${info.pre})}" >上一页</a>
+        <a class="layui-btn layui-btn-normal" th:href="@{/attendance/base(page=${info.next})}" >下一页</a>
+        一共有<span th:text="${info.total}"></span>条数据
+        一共有<span th:text="${info.totalPage}"></span>页
+        当前第<span th:text="${info.cur}"></span>页
+    </div>
+</body>
+</html>
+<script>
+    function addInfo()
+    {  x_admin_show("添加", "/attendance/addPage",500,400);
+    }
+    function resultINfo()
+    {  x_admin_show("统计表", "/atdresult/picture",500,400);
+    }
+    //打开修改页面的方法
+    function update(obj){
+        //获取当前选中行的attendanceID值
+        let id= $(obj).parent().parent().find("td").eq(0).text();
+        //打开修改弹窗
+        x_admin_show("修改","/attendance/editPage?attendanceID="+id,500,400);
+
+    }
+    //删除
+        function delInfo(obj) {
+            //获取当前选中行的attendanceID值
+            let id = $(obj).parent().parent().find("td").eq(0).text();
+            //提示框提示用户是否删除
+            layer.confirm("你确定要删除吗？", {icon: 2, title: "警告"}, (index) => {
+                $.ajax({
+                    url: "/attendance/del",
+                    type: "get",
+                    data: {"attendanceID":id},
+                    dataType: "json",
+                    success: function(data){
+                        layer.alert(data.info, {icon: 0, title: "提示"});
+                        if (data.info === "删除成功") {
+                            // 刷新
+                            layer.close(index);
+                            parent.window.location.href = parent.window.location.href;
+                        }
+                    }
+                });
+            });
+        }
+</script>
